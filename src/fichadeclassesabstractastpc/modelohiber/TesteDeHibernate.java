@@ -6,7 +6,9 @@
 package fichadeclassesabstractastpc.modelohiber;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -32,23 +34,31 @@ public class TesteDeHibernate {
         
         sessao.getTransaction().commit();
         sessao.close();
-        s.close();
+//        s.close();
     }
     
-    private static void actualizarNome(Long i){
+    private static void actualizar(){
         SessionFactory s= NewHibernateUtil.getSessionFactory();
         Session sessao = s.openSession();
         sessao.beginTransaction();
         
-        Professor temp;
-        temp=(Professor)sessao.get(Professor.class, i);
-        temp.setNome("Alfredo");
-        sessao.update(temp);
-        
+        int id =Integer.parseInt(JOptionPane.showInputDialog(null, "Id:"));
+        Professor professor;
+        professor = (Professor)sessao.get(Professor.class, id);
+        JOptionPane.showMessageDialog(null,professor.toString());
+        String nome=JOptionPane.showInputDialog("Nome: ");
+        Date data= java.sql.Date.valueOf(JOptionPane.showInputDialog("Data de nascimento (Ano-Mes-Dia) "));
+        String cadeira=JOptionPane.showInputDialog("Cadeira: ");
+        String estadoCivil=JOptionPane.showInputDialog("Estado civil: ");
+        professor.setCadeira(cadeira);
+        professor.setDataDeNascimento(data);
+        professor.setEstadoCivil(estadoCivil);
+        professor.setNome(nome);
+        sessao.update(professor);
         
         sessao.getTransaction().commit();
         sessao.close();
-        s.close();
+//        s.close();
         
     }
     
@@ -65,7 +75,7 @@ public class TesteDeHibernate {
         
         sessao.getTransaction().commit();
         sessao.close();
-        s.close();
+//        s.close();
         
     }
     
@@ -82,24 +92,25 @@ public class TesteDeHibernate {
         
         sessao.getTransaction().commit();
         sessao.close();
-        s.close();
+//        s.close();
         
     }
     
-    private static void pesquisar(Long ID){
+    private static void pesquisar(){
         SessionFactory s= NewHibernateUtil.getSessionFactory();
         Session sessao = s.openSession();
         sessao.beginTransaction();
         
+        int id =Integer.parseInt(JOptionPane.showInputDialog(null, "Id:"));
         Professor temp;
-        temp=(Professor)sessao.get(Professor.class, ID);
+        temp=(Professor)sessao.get(Professor.class, id);
         JOptionPane.showMessageDialog(null, temp.toString());
         sessao.update(temp);
         
         
         sessao.getTransaction().commit();
         sessao.close();
-        s.close();
+//        s.close();
     }
     
     private static void apagar(){
@@ -107,23 +118,33 @@ public class TesteDeHibernate {
         Session sessao = s.openSession();
         sessao.beginTransaction();
         
-        Professor temp;
-        temp=(Professor)sessao.get(Professor.class, 2);
-        sessao.delete(temp);
+            int id =Integer.parseInt(JOptionPane.showInputDialog(null, "Id: "));
+            Professor professor = (Professor)sessao.get(Professor.class, id);
+            sessao.delete(professor);
         
         sessao.getTransaction().commit();
         sessao.close();
-        s.close();
-        
+//        s.close();
     }
-    
+
+        public static ArrayList<Professor> listar(){
+        SessionFactory sessionFactory= NewHibernateUtil.getSessionFactory();
+        Session sessao = sessionFactory.openSession();
+        sessao = sessionFactory.openSession();
+        sessao.beginTransaction();
+        ArrayList<Professor> arrayList = new ArrayList();
+        Criteria professor = sessao.createCriteria(Professor.class);
+        arrayList.addAll((ArrayList) professor.list());
+        sessao.close();
+        return arrayList;
+    }    
     
     public static void main(String[] args) {
         
-       
+       SessionFactory s= NewHibernateUtil.getSessionFactory();
         int resposta;
         do{
-            resposta=Integer.parseInt(JOptionPane.showInputDialog("1.Registar \n2.Pesquisar \n3.Actualizar \n4.Apagar \n5.Sair"));
+            resposta=Integer.parseInt(JOptionPane.showInputDialog("1.Registar \n2.Remover \n3.Actualizar \n4.Pesquisar \n5.Listar \n6.Sair"));
             
             switch(resposta){
                 case 1:{
@@ -131,26 +152,26 @@ public class TesteDeHibernate {
                 }break;
                 
                 case 2:{
-                    pesquisar(3L);
-                    
+                    apagar();
                 }break;
                 
                 case 3:{
-                    //actualizar(3L);
+                    actualizar();
                 }break;
                 
                 case 4:{
-                    apagar();
-                    
+                    pesquisar();
                 }break;
                 
                 case 5:{
-                    System.exit(0);
-                }break;
+                    listar();
+                    for (Professor professor : listar()) 
+                        JOptionPane.showMessageDialog(null, professor.toString());
+                    }break;
             }
-        }while(resposta!=100);
+        }while(resposta!=6);
         
-        
+        s.close();
     }
     
 }

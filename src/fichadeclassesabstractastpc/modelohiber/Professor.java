@@ -18,7 +18,7 @@ public class Professor {
     
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
     @Column
     private String nome;
     @Column
@@ -40,7 +40,7 @@ public class Professor {
 
     
     
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
